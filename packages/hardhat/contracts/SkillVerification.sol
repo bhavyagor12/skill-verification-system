@@ -21,12 +21,14 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		uint8[] peerRating;
 		address[] verifications;
 	}
-
+	mapping(address => string) public userNames;
 	mapping(address => Skill[]) public userSkills;
 	mapping(address => uint256) public addressToTokenId;
 
 	constructor() ERC721("SkillVerification", "SKV") {
-		userSkills[0xe4eE79d1C87ed91685CcC5EFAb33814Cc00dB679].push(
+		address user = 0xe4eE79d1C87ed91685CcC5EFAb33814Cc00dB679;
+		userNames[user] = "bhavyagor.eth";
+		userSkills[user].push(
 			Skill(
 				0,
 				"Solidity",
@@ -36,7 +38,7 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 				new address[](0)
 			)
 		);
-		userSkills[0xe4eE79d1C87ed91685CcC5EFAb33814Cc00dB679].push(
+		userSkills[user].push(
 			Skill(
 				1,
 				"JavaScript",
@@ -46,6 +48,120 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 				new address[](0)
 			)
 		);
+		userSkills[user].push(
+			Skill(
+				2,
+				"Python",
+				new string[](0),
+				3,
+				new uint8[](0),
+				new address[](0)
+			)
+		);
+		userSkills[user].push(
+			Skill(
+				3,
+				"React",
+				new string[](0),
+				4,
+				new uint8[](0),
+				new address[](0)
+			)
+		);
+		userSkills[user].push(
+			Skill(
+				4,
+				"Node.js",
+				new string[](0),
+				3,
+				new uint8[](0),
+				new address[](0)
+			)
+		);
+		userSkills[user].push(
+			Skill(
+				5,
+				"Express.js",
+				new string[](0),
+				3,
+				new uint8[](0),
+				new address[](0)
+			)
+		);
+		userSkills[user].push(
+			Skill(
+				6,
+				"MongoDB",
+				new string[](0),
+				3,
+				new uint8[](0),
+				new address[](0)
+			)
+		);
+		userSkills[user].push(
+			Skill(
+				7,
+				"Web3.js",
+				new string[](0),
+				4,
+				new uint8[](0),
+				new address[](0)
+			)
+		);
+		userSkills[user].push(
+			Skill(
+				8,
+				"Truffle",
+				new string[](0),
+				4,
+				new uint8[](0),
+				new address[](0)
+			)
+		);
+		userSkills[user].push(
+			Skill(
+				9,
+				"Hardhat",
+				new string[](0),
+				4,
+				new uint8[](0),
+				new address[](0)
+			)
+		);
+		userSkills[user].push(
+			Skill(
+				10,
+				"Ganache",
+				new string[](0),
+				4,
+				new uint8[](0),
+				new address[](0)
+			)
+		);
+		userSkills[user].push(
+			Skill(
+				11,
+				"Ethers.js",
+				new string[](0),
+				4,
+				new uint8[](0),
+				new address[](0)
+			)
+		);
+		userSkills[user].push(
+			Skill(
+				12,
+				"IPFS",
+				new string[](0),
+				4,
+				new uint8[](0),
+				new address[](0)
+			)
+		);
+	}
+
+	function addName(string memory _name) public {
+		userNames[msg.sender] = _name;
 	}
 
 	function addSkill(
@@ -53,8 +169,16 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		string[] memory _proof_of_work,
 		uint8 _selfRating
 	) public {
-		uint256 id = userSkills[msg.sender].length;
+		require(
+			_selfRating >= 1 && _selfRating <= 5,
+			"Rating should be between 1 and 5"
+		);
+		require(
+			bytes(userNames[msg.sender]).length > 0,
+			"Please set your name first"
+		);
 
+		uint256 id = userSkills[msg.sender].length;
 		Skill memory skill = Skill(
 			id,
 			_name,
@@ -72,54 +196,78 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		return _buildTokenURI(tokenId);
 	}
 
-	function _buildSkillSVG(
-		Skill memory skill,
-		uint256 textY
+	function _createText(
+		string memory _text,
+		uint256 _x,
+		uint256 _y,
+		uint256 _fontSize
 	) private pure returns (string memory) {
 		return
 			string(
 				abi.encodePacked(
-					'<text x="10" y="',
-					toString(20 + (textY * 50)),
-					'" font-family="Verdana" font-size="10" fill="black">',
-					skill.name,
-					"</text>",
-					'<text x="10" y="',
-					toString(40 + (textY * 50)),
-					'" font-family="Verdana" font-size="10" fill="black">',
-					"Total Rating: ",
-					toString(
-						computeTotalRating(
-							skill.selfRating,
-							computePeerRating(skill.peerRating)
-						)
-					),
-					"</text>",
-					'<svg x="',
-					toString(bytes(skill.name).length + 20),
+					'<text x="',
+					toString(_x),
 					'" y="',
-					toString(20 + (textY * 50)),
-					'" width="250" height="50" xmlns="http://www.w3.org/2000/svg">',
-					generateStarsSVG(
-						computeTotalRating(
-							skill.selfRating,
-							computePeerRating(skill.peerRating)
-						)
-					),
-					"</svg>"
+					toString(_y),
+					'" font-family="Verdana" font-size="',
+					toString(_fontSize),
+					'" fill="black">',
+					_text,
+					"</text>"
 				)
 			);
 	}
 
+	function _buildSkillSVG(
+		Skill memory skill,
+		uint256 textY
+	) private pure returns (string memory) {
+		string memory svg;
+
+		svg = string(
+			abi.encodePacked(
+				_createText(skill.name, 10, 62 + (textY * 50), 15),
+				'<svg x="',
+				toString(bytes(skill.name).length + 40),
+				'" y="',
+				toString(48 + (textY * 50)),
+				'" width="250" height="50" xmlns="http://www.w3.org/2000/svg">',
+				generateStarsSVG(
+					computeTotalRating(
+						skill.selfRating,
+						computePeerRating(skill.peerRating)
+					)
+				),
+				"</svg>",
+				_createText(
+					string(
+						abi.encodePacked(
+							"(",
+							toString(skill.verifications.length),
+							")"
+						)
+					),
+					bytes(skill.name).length + 185, // Adjust x-coordinate to position it after stars
+					60 + (textY * 50),
+					15
+				)
+			)
+		);
+
+		return svg;
+	}
+
 	function _combineSVGs(
 		string[] memory skillSVGs
-	) private pure returns (string memory) {
+	) private view returns (string memory) {
 		string
 			memory combinedSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">';
 		combinedSVG = string(
 			abi.encodePacked(
 				combinedSVG,
-				'<rect width="500" height="500" fill="#f0f0f0"/>'
+				'<rect width="500" height="500" fill="white"/>',
+				_createText(userNames[msg.sender], 40, 40, 40),
+				_createText("For more info visit: siteName", 10, 500, 10)
 			)
 		);
 		for (uint256 i = 0; i < skillSVGs.length; i++) {
@@ -198,7 +346,7 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 						stars,
 						'<svg x="',
 						toString(30 + (i * 24)), // Calculate x-coordinate inline
-						'" y="0" width="24" height="24" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">',
+						'" y="0" width="16" height="16" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">',
 						'<polygon points="20,0 8,36 38,12 2,12 32,36" fill="blue"/>',
 						"</svg>"
 					)
@@ -210,7 +358,7 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 						stars,
 						'<svg x="',
 						toString(30 + (i * 24)), // Calculate x-coordinate inline
-						'" y="0" width="24" height="24" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">',
+						'" y="0" width="16" height="16" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">',
 						'<polygon points="20,0 8,36 38,12 2,12 32,36" fill="gray"/>',
 						"</svg>"
 					)
