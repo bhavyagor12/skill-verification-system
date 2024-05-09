@@ -18,7 +18,7 @@ const SkillSchema = new mongoose.Schema({
 });
 
 // Define the user schema
-const UserSchema = new mongoose.Schema({
+export const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -27,21 +27,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  image: String,
   github: String,
   portfolio: String,
   buidlguidl: String,
+  twitter: String,
   skills: [SkillSchema], // Use the skills subdocument schema here
 });
 
-const UsersArraySchema = new mongoose.Schema({
-  users: [UserSchema], // Use the user schema here
-});
-
-let UsersArray;
-try {
-  UsersArray = mongoose.model("UsersArray");
-} catch (e) {
-  UsersArray = mongoose.model("UsersArray", UsersArraySchema);
-}
-
-export default UsersArray;
+export const User = mongoose.models.User || mongoose.model("User", UserSchema);
