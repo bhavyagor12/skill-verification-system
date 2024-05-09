@@ -1,11 +1,14 @@
 "use client";
 
+import { UserProfileModal } from "./_components/UserProfileModal";
 import { Divider } from "@mui/material";
 import type { NextPage } from "next";
 import { SocialIcon } from "react-social-icons";
 import SkillRenderer from "~~/components/SkillRenderer";
 import { Address } from "~~/components/scaffold-eth";
+import { useUserHook } from "~~/providers/UserProvider";
 import { Skill, User } from "~~/types/commontypes";
+import { notification } from "~~/utils/scaffold-eth";
 
 const UserData: User = {
   name: "John Doe",
@@ -113,6 +116,16 @@ const Skills: Skill[] = [
 ];
 
 const Profile: NextPage = () => {
+  const { user } = useUserHook();
+  if (!user)
+    return (
+      <UserProfileModal
+        isOpen={true}
+        onClose={() => {
+          notification.info("Please create a profile first.");
+        }}
+      />
+    );
   return (
     <div className="flex mx-20 my-10 gap-4 ">
       {/* Left section */}
