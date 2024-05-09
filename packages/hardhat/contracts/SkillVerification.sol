@@ -14,12 +14,10 @@ import "@openzeppelin/contracts/utils/Base64.sol";
  */
 contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 	struct Skill {
-		uint256 id;
 		string name;
-		string[] proof_of_work;
 		uint8 selfRating;
-		uint8[] peerRating;
-		address[] verifications;
+		uint8 peerRating;
+		uint8 totalVerifications;
 	}
 	mapping(address => string) public userNames;
 	mapping(address => Skill[]) public userSkills;
@@ -29,134 +27,34 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		address user = 0xe4eE79d1C87ed91685CcC5EFAb33814Cc00dB679;
 		userNames[user] = "bhavyagor.eth";
 		userSkills[user].push(
-			Skill(
-				0,
-				"Solidity",
-				new string[](0),
-				5,
-				new uint8[](0),
-				new address[](0)
-			)
+			Skill(0, "Solidity", 5, new uint8[](0), new address[](0))
 		);
 		userSkills[user].push(
-			Skill(
-				1,
-				"JavaScript",
-				new string[](0),
-				4,
-				new uint8[](0),
-				new address[](0)
-			)
+			Skill(1, "JavaScript", 4, new uint8[](0), new address[](0))
 		);
 		userSkills[user].push(
-			Skill(
-				2,
-				"Python",
-				new string[](0),
-				3,
-				new uint8[](0),
-				new address[](0)
-			)
+			Skill(2, "Python", 3, new uint8[](0), new address[](0))
 		);
 		userSkills[user].push(
-			Skill(
-				3,
-				"React",
-				new string[](0),
-				4,
-				new uint8[](0),
-				new address[](0)
-			)
+			Skill(3, "React", 4, new uint8[](0), new address[](0))
 		);
 		userSkills[user].push(
-			Skill(
-				4,
-				"Node.js",
-				new string[](0),
-				3,
-				new uint8[](0),
-				new address[](0)
-			)
+			Skill(4, "Node.js", 3, new uint8[](0), new address[](0))
 		);
 		userSkills[user].push(
-			Skill(
-				5,
-				"Express.js",
-				new string[](0),
-				3,
-				new uint8[](0),
-				new address[](0)
-			)
+			Skill(5, "Express.js", 3, new uint8[](0), new address[](0))
 		);
 		userSkills[user].push(
-			Skill(
-				6,
-				"MongoDB",
-				new string[](0),
-				3,
-				new uint8[](0),
-				new address[](0)
-			)
+			Skill(6, "MongoDB", 3, new uint8[](0), new address[](0))
 		);
 		userSkills[user].push(
-			Skill(
-				7,
-				"Web3.js",
-				new string[](0),
-				4,
-				new uint8[](0),
-				new address[](0)
-			)
+			Skill(7, "Web3.js", 4, new uint8[](0), new address[](0))
 		);
 		userSkills[user].push(
-			Skill(
-				8,
-				"Truffle",
-				new string[](0),
-				4,
-				new uint8[](0),
-				new address[](0)
-			)
+			Skill(8, "Truffle", 4, new uint8[](0), new address[](0))
 		);
 		userSkills[user].push(
-			Skill(
-				9,
-				"Hardhat",
-				new string[](0),
-				4,
-				new uint8[](0),
-				new address[](0)
-			)
-		);
-		userSkills[user].push(
-			Skill(
-				10,
-				"Ganache",
-				new string[](0),
-				4,
-				new uint8[](0),
-				new address[](0)
-			)
-		);
-		userSkills[user].push(
-			Skill(
-				11,
-				"Ethers.js",
-				new string[](0),
-				4,
-				new uint8[](0),
-				new address[](0)
-			)
-		);
-		userSkills[user].push(
-			Skill(
-				12,
-				"IPFS",
-				new string[](0),
-				4,
-				new uint8[](0),
-				new address[](0)
-			)
+			Skill(9, "Hardhat", 4, new uint8[](0), new address[](0))
 		);
 	}
 
@@ -164,11 +62,7 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		userNames[msg.sender] = _name;
 	}
 
-	function addSkill(
-		string memory _name,
-		string[] memory _proof_of_work,
-		uint8 _selfRating
-	) public {
+	function addSkill(string memory _name, uint8 _selfRating) public {
 		require(
 			_selfRating >= 1 && _selfRating <= 5,
 			"Rating should be between 1 and 5"
@@ -182,7 +76,6 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		Skill memory skill = Skill(
 			id,
 			_name,
-			_proof_of_work,
 			_selfRating,
 			new uint8[](0),
 			new address[](0)
