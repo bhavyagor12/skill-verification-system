@@ -14,6 +14,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
  */
 contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 	struct Skill {
+		uint256 skillId;
 		string name;
 		uint8 selfRating;
 		uint8 peerRating;
@@ -24,45 +25,25 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 	mapping(address => uint256) public addressToTokenId;
 
 	constructor() ERC721("SkillVerification", "SKV") {
-		address user = 0xe4eE79d1C87ed91685CcC5EFAb33814Cc00dB679;
+		address user = 0xE42297a87b9882526FF2E5Ea0B190d3e8de6f793;
 		userNames[user] = "bhavyagor.eth";
-		userSkills[user].push(
-			Skill(0, "Solidity", 5, new uint8[](0), new address[](0))
-		);
-		userSkills[user].push(
-			Skill(1, "JavaScript", 4, new uint8[](0), new address[](0))
-		);
-		userSkills[user].push(
-			Skill(2, "Python", 3, new uint8[](0), new address[](0))
-		);
-		userSkills[user].push(
-			Skill(3, "React", 4, new uint8[](0), new address[](0))
-		);
-		userSkills[user].push(
-			Skill(4, "Node.js", 3, new uint8[](0), new address[](0))
-		);
-		userSkills[user].push(
-			Skill(5, "Express.js", 3, new uint8[](0), new address[](0))
-		);
-		userSkills[user].push(
-			Skill(6, "MongoDB", 3, new uint8[](0), new address[](0))
-		);
-		userSkills[user].push(
-			Skill(7, "Web3.js", 4, new uint8[](0), new address[](0))
-		);
-		userSkills[user].push(
-			Skill(8, "Truffle", 4, new uint8[](0), new address[](0))
-		);
-		userSkills[user].push(
-			Skill(9, "Hardhat", 4, new uint8[](0), new address[](0))
-		);
+		userSkills[user].push(Skill(0, "Solidity", 5, 0, 0));
+		userSkills[user].push(Skill(1, "JavaScript", 4, 0, 0));
+		userSkills[user].push(Skill(2, "React", 4, 0, 0));
+		userSkills[user].push(Skill(3, "Node.js", 4, 0, 0));
+		userSkills[user].push(Skill(4, "Web3.js", 4, 0, 0));
+		userSkills[user].push(Skill(5, "Truffle", 4, 0, 0));
 	}
 
 	function addName(string memory _name) public {
 		userNames[msg.sender] = _name;
 	}
 
-	function addSkill(string memory _name, uint8 _selfRating) public {
+	function addSkill(
+		uint256 skillId,
+		string memory _name,
+		uint8 _selfRating
+	) public {
 		require(
 			_selfRating >= 1 && _selfRating <= 5,
 			"Rating should be between 1 and 5"
@@ -72,14 +53,7 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 			"Please set your name first"
 		);
 
-		uint256 id = userSkills[msg.sender].length;
-		Skill memory skill = Skill(
-			id,
-			_name,
-			_selfRating,
-			new uint8[](0),
-			new address[](0)
-		);
+		Skill memory skill = Skill(skillId, _name, _selfRating, 0, 0);
 		userSkills[msg.sender].push(skill);
 	}
 
@@ -126,17 +100,14 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 				toString(48 + (textY * 50)),
 				'" width="250" height="50" xmlns="http://www.w3.org/2000/svg">',
 				generateStarsSVG(
-					computeTotalRating(
-						skill.selfRating,
-						computePeerRating(skill.peerRating)
-					)
+					computeTotalRating(skill.selfRating, skill.peerRating)
 				),
 				"</svg>",
 				_createText(
 					string(
 						abi.encodePacked(
 							"(",
-							toString(skill.verifications.length),
+							toString(skill.totalVerifications),
 							")"
 						)
 					),
@@ -289,21 +260,8 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 			_rating >= 1 && _rating <= 5,
 			"Rating should be between 1 and 5"
 		);
-		userSkills[_user][_skillId].peerRating.push(_rating);
-		userSkills[_user][_skillId].verifications.push(msg.sender);
-	}
-
-	function computePeerRating(
-		uint8[] memory _peerRating
-	) public pure returns (uint8) {
-		if (_peerRating.length == 0) {
-			return 0; // Avoid division by zero
-		}
-		uint256 sum = 0;
-		for (uint256 i = 0; i < _peerRating.length; i++) {
-			sum += uint256(_peerRating[i]);
-		}
-		return uint8(sum / _peerRating.length);
+		userSkills[_user][_skillId].peerRating = _rating;
+		userSkills[_user][_skillId].totalVerifications += 1;
 	}
 
 	function computeTotalRating(

@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     SkillVerification: {
-      address: "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1",
+      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
       abi: [
         {
           inputs: [],
@@ -156,14 +156,14 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint256",
+              name: "skillId",
+              type: "uint256",
+            },
+            {
               internalType: "string",
               name: "_name",
               type: "string",
-            },
-            {
-              internalType: "string[]",
-              name: "_proof_of_work",
-              type: "string[]",
             },
             {
               internalType: "uint8",
@@ -235,25 +235,6 @@ const deployedContracts = {
         {
           inputs: [
             {
-              internalType: "uint8[]",
-              name: "_peerRating",
-              type: "uint8[]",
-            },
-          ],
-          name: "computePeerRating",
-          outputs: [
-            {
-              internalType: "uint8",
-              name: "",
-              type: "uint8",
-            },
-          ],
-          stateMutability: "pure",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
               internalType: "uint8",
               name: "_selfRating",
               type: "uint8",
@@ -308,7 +289,7 @@ const deployedContracts = {
               components: [
                 {
                   internalType: "uint256",
-                  name: "id",
+                  name: "skillId",
                   type: "uint256",
                 },
                 {
@@ -317,24 +298,19 @@ const deployedContracts = {
                   type: "string",
                 },
                 {
-                  internalType: "string[]",
-                  name: "proof_of_work",
-                  type: "string[]",
-                },
-                {
                   internalType: "uint8",
                   name: "selfRating",
                   type: "uint8",
                 },
                 {
-                  internalType: "uint8[]",
+                  internalType: "uint8",
                   name: "peerRating",
-                  type: "uint8[]",
+                  type: "uint8",
                 },
                 {
-                  internalType: "address[]",
-                  name: "verifications",
-                  type: "address[]",
+                  internalType: "uint8",
+                  name: "totalVerifications",
+                  type: "uint8",
                 },
               ],
               internalType: "struct SkillVerification.Skill",
@@ -372,7 +348,7 @@ const deployedContracts = {
               components: [
                 {
                   internalType: "uint256",
-                  name: "id",
+                  name: "skillId",
                   type: "uint256",
                 },
                 {
@@ -381,24 +357,19 @@ const deployedContracts = {
                   type: "string",
                 },
                 {
-                  internalType: "string[]",
-                  name: "proof_of_work",
-                  type: "string[]",
-                },
-                {
                   internalType: "uint8",
                   name: "selfRating",
                   type: "uint8",
                 },
                 {
-                  internalType: "uint8[]",
+                  internalType: "uint8",
                   name: "peerRating",
-                  type: "uint8[]",
+                  type: "uint8",
                 },
                 {
-                  internalType: "address[]",
-                  name: "verifications",
-                  type: "address[]",
+                  internalType: "uint8",
+                  name: "totalVerifications",
+                  type: "uint8",
                 },
               ],
               internalType: "struct SkillVerification.Skill[]",
@@ -684,7 +655,7 @@ const deployedContracts = {
           outputs: [
             {
               internalType: "uint256",
-              name: "id",
+              name: "skillId",
               type: "uint256",
             },
             {
@@ -695,6 +666,16 @@ const deployedContracts = {
             {
               internalType: "uint8",
               name: "selfRating",
+              type: "uint8",
+            },
+            {
+              internalType: "uint8",
+              name: "peerRating",
+              type: "uint8",
+            },
+            {
+              internalType: "uint8",
+              name: "totalVerifications",
               type: "uint8",
             },
           ],
