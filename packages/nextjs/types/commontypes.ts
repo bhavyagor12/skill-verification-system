@@ -1,11 +1,12 @@
 export interface User {
-  name: string;
   address: string;
+  name: string;
   image?: string;
   github?: string;
-  portfolio?: string;
-  buidlguidl?: string;
   twitter?: string;
+  discord?: string;
+  telegram?: string;
+  linkedin?: string;
   skills: Skill[];
 }
 

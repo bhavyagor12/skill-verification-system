@@ -26,12 +26,14 @@ export const UserSchema = new mongoose.Schema({
   address: {
     type: String,
     required: true,
+    unique: true,
   },
   image: String,
   github: String,
-  portfolio: String,
-  buidlguidl: String,
   twitter: String,
+  discord: String,
+  telegram: String,
+  linkedin: String,
   skills: [SkillSchema], // Use the skills subdocument schema here
 });
 
