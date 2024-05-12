@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Skill } from "~~/types/commontypes";
 
 interface ModalProps {
@@ -8,6 +8,7 @@ interface ModalProps {
 }
 
 const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => {
+  console.log({initialSkill})
   const [skill, setSkill] = useState<Skill>(initialSkill);
 
   const handleProofOfWorkChange = (index: number, value: string) => {
@@ -30,6 +31,10 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
     });
     onClose();
   };
+
+  useEffect(() => {
+    setSkill(initialSkill);
+  }, []);
   return (
     <div className={`fixed inset-0 z-50 overflow-y-auto ${isOpen ? "block" : "hidden"}`}>
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
