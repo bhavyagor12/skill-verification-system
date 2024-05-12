@@ -138,7 +138,7 @@ const Profile: NextPage = () => {
           </button>
         </div>
         <div className="grid grid-cols-3 gap-6 pt-4 ">
-          {Skills.map((skill: Skill) => (
+          {user.skills.map((skill: Skill) => (
             <SkillRenderer key={skill.name} skill={skill} />
           ))}
         </div>

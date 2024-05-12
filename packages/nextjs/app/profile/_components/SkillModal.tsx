@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { useUserHook } from "~~/providers/UserProvider";
 import { Skill } from "~~/types/commontypes";
+import { notification } from "~~/utils/scaffold-eth";
 
 interface ModalProps {
   isOpen: boolean;
@@ -8,9 +10,8 @@ interface ModalProps {
 }
 
 const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => {
-  console.log({initialSkill})
   const [skill, setSkill] = useState<Skill>(initialSkill);
-
+  const { userQuery, updateUser } = useUserHook();
   const handleProofOfWorkChange = (index: number, value: string) => {
     const updatedProofOfWork = [...(skill.proof_of_work as string[])];
     updatedProofOfWork[index] = value;
@@ -27,7 +28,7 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
       self_rating: 0,
       peer_rating: 0,
       proof_of_work: [""],
-      verifiers: [""],
+      verifiers: [],
     });
     onClose();
   };
@@ -35,6 +36,10 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
   useEffect(() => {
     setSkill(initialSkill);
   }, []);
+
+  if (userQuery.isLoading) return <span className="loading loading-spinner loading-xs"></span>;
+  if (!userQuery.data) return null;
+  const user = userQuery.data;
   return (
     <div className={`fixed inset-0 z-50 overflow-y-auto ${isOpen ? "block" : "hidden"}`}>
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -77,7 +82,7 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
                 <label className="block text-sm font-medium text-gray-700">SELF RATING</label>
                 <input
                   type="number"
-                  value={skill.self_rating || 1}
+                  value={skill.self_rating}
                   min={1}
                   max={5}
                   onChange={e => setSkill({ ...skill, self_rating: parseInt(e.target.value) })}
@@ -103,7 +108,30 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
             </div>
           </>
           <div className="mt-5 sm:mt-6">
-            <button onClick={() => { }} type="button" className="btn btn-primary rounded-md w-full">
+            <button
+              onClick={() => {
+                console.log({skill})
+                if (!skill.name || !skill.self_rating || skill.proof_of_work?.length === 0) {
+                  notification.error("Please have name and self rating fields filled out.");
+                  return;
+                }
+                if (initialSkill.name !== "") {
+                  const updatedSkills = user.skills?.map(s => {
+                    if (s.name === initialSkill.name) {
+                      return skill;
+                    }
+                    return s;
+                  });
+                  updateUser.mutateAsync({ skills: updatedSkills });
+                  notification.success("Skill updated successfully");
+                  return;
+                }
+                updateUser.mutateAsync({ skills: [...(user.skills as Skill[]), skill] });
+                notification.success("Skill created successfully");
+              }}
+              type="button"
+              className="btn btn-primary rounded-md w-full"
+            >
               Submit
             </button>
           </div>
