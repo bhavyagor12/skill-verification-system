@@ -12,8 +12,8 @@ interface ModalProps {
 
 const UserProfileModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const { address } = useAccount();
-  const { createUser } = useUserHook();
-
+  const { createUser, updateUser } = useUserHook();
+  const [userExists, setUserExists] = useState<boolean>(false);
   const [user, setUser] = useState<User>({
     address: address as string,
     name: "",
@@ -30,10 +30,12 @@ const UserProfileModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const fetchUser = async () => {
       if (!address) return;
       const user = await getUserById(address);
+      if (!user) return;
       setUser(user);
+      setUserExists(true);
     };
     fetchUser();
-  }, [user, getUserById, address]);
+  }, [address]);
   const handleClose = () => {
     onClose();
   };
@@ -67,7 +69,7 @@ const UserProfileModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           <>
             <div className="mt-2">
               {Object.keys(user).map(key => {
-                if (key === "address" || key === "skills") return null;
+                if (key === "address" || key === "skills" || key === "_id" || key.includes("_v")) return null;
                 return (
                   <div key={key} className="flex flex-col mt-2 gap-2">
                     <span className="text-primary">{key.toUpperCase()}</span>
@@ -87,19 +89,15 @@ const UserProfileModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           <div className="mt-5 sm:mt-6">
             <button
               onClick={() => {
-                if (
-                  !user.name ||
-                  !user.image ||
-                  !user.github ||
-                  !user.twitter ||
-                  !user.discord ||
-                  !user.telegram ||
-                  !user.linkedin
-                ) {
-                  notification.error("Please fill all the fields");
+                if (!user.name || !user.image) {
+                  notification.error("Please have image and name fields filled out.");
                   return;
                 }
-                createUser.mutateAsync(user);
+                if (userExists) {
+                  updateUser.mutateAsync(user);
+                } else {
+                  createUser.mutateAsync(user);
+                }
                 notification.success("User created successfully");
               }}
               type="button"

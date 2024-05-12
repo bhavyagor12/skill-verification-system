@@ -6,7 +6,6 @@ import { User } from "~~/types/commontypes";
 
 interface IUser {
   users: User[];
-  user: User | undefined;
   usersQuery: UseQueryResult<User[], unknown>;
   userQuery: UseQueryResult<User, unknown>;
   createUser: UseMutationResult<User, unknown, Partial<User>, unknown>;
@@ -29,13 +28,6 @@ const useUser = () => {
       return response.json();
     },
   });
-  const user = useMemo(() => {
-    if (!address || !users || users.length <= 0) return undefined;
-    const foundUser = users.find(u => {
-      return u.address === address;
-    });
-    return foundUser;
-  }, [users, address]);
 
   useEffect(() => {
     if (usersQuery.data) {
@@ -66,6 +58,10 @@ const useUser = () => {
       }
       return response.json();
     },
+    onSuccess: () => {
+      usersQuery.refetch();
+      userQuery.refetch();
+    },
   });
 
   const updateUser = useMutation({
@@ -81,11 +77,11 @@ const useUser = () => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+      console.log(response);
       return response.json();
     },
     onSuccess: () => {
       usersQuery.refetch();
-      userQuery.refetch();
     },
   });
 
@@ -108,7 +104,6 @@ const useUser = () => {
 
   return {
     users,
-    user,
     usersQuery,
     userQuery,
     createUser,

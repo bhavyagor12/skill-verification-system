@@ -42,5 +42,8 @@
   },
   "engines": {
     "node": ">=18.17.0"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.2"
   }
 }
