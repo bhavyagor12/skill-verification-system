@@ -7,6 +7,7 @@ import { Divider } from "@mui/material";
 import type { NextPage } from "next";
 import SkillRenderer from "~~/components/SkillRenderer";
 import { SocialIconRenderer } from "~~/components/SocialIconRenderer";
+import UserRenderer from "~~/components/UserRenderer";
 import { Address } from "~~/components/scaffold-eth";
 import { useUserHook } from "~~/providers/UserProvider";
 import { Skill } from "~~/types/commontypes";
@@ -34,23 +35,7 @@ const Profile: NextPage = () => {
       {/* Left section */}
       <div className="w-1/5 p-4 border-2 border-secondary">
         <div className="flex items-center flex-col justify-between h-full gap-4">
-          <div className="flex items-center flex-col h-full gap-4">
-            <div className="rounded-md overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={user.image} alt="Profile" className="w-44 h-40 object-cover" />
-            </div>
-            <div className="text-4xl font-bold">{user.name}</div>
-            <Address address={user.address} />
-            <Divider className="w-full" />
-            <div className="flex items-center gap-2">
-              <SocialIconRenderer url={user.github as string} type="github" />
-              <SocialIconRenderer url={user.twitter as string} type="twitter" />
-              <SocialIconRenderer url={user.discord as string} type="discord" />
-              <SocialIconRenderer url={user.telegram as string} type="t" />
-              <SocialIconRenderer url={user.linkedin as string} type="linkedin" />
-            </div>
-            <Divider className="w-full" />
-          </div>
+          <UserRenderer user={user} />
           <div>
             <button
               className="btn btn-primary rounded-md uppercase"
@@ -74,7 +59,7 @@ const Profile: NextPage = () => {
         </div>
         <div className="grid grid-cols-3 gap-6 pt-4 ">
           {user.skills.map((skill: Skill) => (
-            <SkillRenderer key={skill.name} skill={skill} />
+            <SkillRenderer key={skill.name} skill={skill} canEdit={true} />
           ))}
         </div>
       </div>
