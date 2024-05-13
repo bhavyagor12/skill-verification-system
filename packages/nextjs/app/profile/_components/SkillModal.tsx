@@ -35,7 +35,7 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
 
   useEffect(() => {
     setSkill(initialSkill);
-  }, []);
+  }, [initialSkill]);
 
   if (userQuery.isLoading) return <span className="loading loading-spinner loading-xs"></span>;
   if (!userQuery.data) return null;
@@ -110,7 +110,7 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
           <div className="mt-5 sm:mt-6">
             <button
               onClick={() => {
-                console.log({skill})
+                console.log({ skill });
                 if (!skill.name || !skill.self_rating || skill.proof_of_work?.length === 0) {
                   notification.error("Please have name and self rating fields filled out.");
                   return;

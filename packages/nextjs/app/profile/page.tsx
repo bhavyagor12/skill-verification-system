@@ -9,74 +9,8 @@ import SkillRenderer from "~~/components/SkillRenderer";
 import { SocialIconRenderer } from "~~/components/SocialIconRenderer";
 import { Address } from "~~/components/scaffold-eth";
 import { useUserHook } from "~~/providers/UserProvider";
-import { Skill, User } from "~~/types/commontypes";
+import { Skill } from "~~/types/commontypes";
 import { notification } from "~~/utils/scaffold-eth";
-
-const Skills: Skill[] = [
-  {
-    name: "JavaScript",
-    self_rating: 4,
-    peer_rating: 3,
-    proof_of_work: ["Project 1", "Project 2"],
-    verifiers: ["Jane Smith", "Bob Johnson"],
-  },
-  {
-    name: "React",
-    self_rating: 5,
-    peer_rating: 4,
-    proof_of_work: ["Project 3", "Project 4"],
-    verifiers: ["Alice Brown", "Tom Green"],
-  },
-  {
-    name: "TypeScript",
-    self_rating: 4,
-    peer_rating: 5,
-    proof_of_work: ["Project 5", "Project 6"],
-    verifiers: ["Charlie White", "David Black"],
-  },
-  {
-    name: "HTML",
-    self_rating: 3,
-    peer_rating: 2,
-    proof_of_work: ["Project 7", "Project 8"],
-    verifiers: ["Eve Red", "Frank Blue"],
-  },
-  {
-    name: "CSS",
-    self_rating: 4,
-    peer_rating: 4,
-    proof_of_work: ["Project 9", "Project 10"],
-    verifiers: ["Grace Yellow"],
-  },
-  {
-    name: "Tailwind CSS",
-    self_rating: 4,
-    peer_rating: 5,
-    proof_of_work: ["Project 11", "Project 12"],
-    verifiers: ["Hank Purple"],
-  },
-  {
-    name: "Bootstrap",
-    self_rating: 3,
-    peer_rating: 3,
-    proof_of_work: ["Project 13", "Project 14"],
-    verifiers: ["Ivy Orange"],
-  },
-  {
-    name: "Material-UI",
-    self_rating: 4,
-    peer_rating: 4,
-    proof_of_work: ["Project 15", "Project 16"],
-    verifiers: ["Jack Brown"],
-  },
-  {
-    name: "Chakra UI",
-    self_rating: 4,
-    peer_rating: 4,
-    proof_of_work: ["Project 17", "Project 18"],
-    verifiers: ["Kelly Green"],
-  },
-];
 
 const Profile: NextPage = () => {
   const { userQuery } = useUserHook();
@@ -102,8 +36,9 @@ const Profile: NextPage = () => {
         <div className="flex items-center flex-col justify-between h-full gap-4">
           <div className="flex items-center flex-col h-full gap-4">
             <div className="rounded-md overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={user.image} alt="Profile" className="w-44 h-40 object-cover" />
-            </div>{" "}
+            </div>
             <div className="text-4xl font-bold">{user.name}</div>
             <Address address={user.address} />
             <Divider className="w-full" />
@@ -153,7 +88,7 @@ const Profile: NextPage = () => {
             self_rating: 0,
             peer_rating: 0,
             proof_of_work: [""],
-            verifiers: [""],
+            verifiers: [],
           } as Skill
         }
       />
