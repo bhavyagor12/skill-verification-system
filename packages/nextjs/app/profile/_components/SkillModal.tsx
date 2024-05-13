@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Rating } from "@mui/material";
 import { useUserHook } from "~~/providers/UserProvider";
 import { Skill } from "~~/types/commontypes";
 import { notification } from "~~/utils/scaffold-eth";
@@ -80,13 +81,13 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
               </div>
               <div className="flex flex-col mt-2 gap-2">
                 <label className="block text-sm font-medium text-gray-700">SELF RATING</label>
-                <input
-                  type="number"
+                <Rating
+                  size="large"
+                  name="simple-controlled"
                   value={skill.self_rating}
-                  min={1}
-                  max={5}
-                  onChange={e => setSkill({ ...skill, self_rating: parseInt(e.target.value) })}
-                  className="input input-bordered w-full"
+                  onChange={(event, newValue) => {
+                    setSkill({ ...skill, self_rating: newValue as number });
+                  }}
                 />
               </div>
               {skill.proof_of_work?.map((work, index) => (
@@ -110,7 +111,6 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
           <div className="mt-5 sm:mt-6">
             <button
               onClick={() => {
-                console.log({ skill });
                 if (!skill.name || !skill.self_rating || skill.proof_of_work?.length === 0) {
                   notification.error("Please have name and self rating fields filled out.");
                   return;
@@ -124,10 +124,12 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
                   });
                   updateUser.mutateAsync({ skills: updatedSkills });
                   notification.success("Skill updated successfully");
+                  handleClose();
                   return;
                 }
                 updateUser.mutateAsync({ skills: [...(user.skills as Skill[]), skill] });
                 notification.success("Skill created successfully");
+                handleClose();
               }}
               type="button"
               className="btn btn-primary rounded-md w-full"

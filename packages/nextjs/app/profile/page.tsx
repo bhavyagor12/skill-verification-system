@@ -31,9 +31,9 @@ const Profile: NextPage = () => {
     );
 
   return (
-    <div className="flex mx-20 my-10 gap-4 ">
+    <div className="flex flex-col md:flex-row items-center md:items-start md:mx-20 my-10 gap-4 ">
       {/* Left section */}
-      <div className="w-1/5 p-4 border-2 border-secondary">
+      <div className="md:w-1/5 p-4 border-2 border-secondary">
         <div className="flex items-center flex-col justify-between h-full gap-4">
           <UserRenderer user={user} />
           <div>
@@ -51,13 +51,13 @@ const Profile: NextPage = () => {
 
       {/* Right section */}
       <div className="w-4/5 p-4 flex flex-col">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="text-2xl font-bold">Skills</div>
           <button className="btn btn-primary rounded-md uppercase" onClick={() => setOpenSkill(!openSkill)}>
             Add New Skill
           </button>
         </div>
-        <div className="grid grid-cols-3 gap-6 pt-4 ">
+        <div className="grid  md:grid-cols-3 gap-6 pt-4 ">
           {user.skills.map((skill: Skill) => (
             <SkillRenderer key={skill.name} skill={skill} canEdit={true} />
           ))}

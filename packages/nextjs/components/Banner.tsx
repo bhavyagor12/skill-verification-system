@@ -22,7 +22,7 @@ export const Banner = () => (
           </p>
         </div>
         <Link
-          href="/get-started"
+          href="/profile"
           className="btn btn-primary btn-md border-1 border-black hover:border-black hover:border-1 rounded-2xl px-14 font-bold shadow-none"
         >
           Get Started
