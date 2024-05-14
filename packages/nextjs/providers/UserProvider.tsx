@@ -66,7 +66,7 @@ const useUser = () => {
 
   const updateUser = useMutation({
     mutationFn: async (updateData: Partial<User>) => {
-      if (!address) return;
+      const address = updateData.address;
       const response = await fetch(`/api/users/${address}`, {
         method: "PUT",
         headers: {
@@ -82,6 +82,7 @@ const useUser = () => {
     },
     onSuccess: () => {
       usersQuery.refetch();
+      userQuery.refetch();
     },
   });
 

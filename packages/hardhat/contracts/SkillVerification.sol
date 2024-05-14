@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: MIT.sol
 pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -18,25 +18,17 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		string name;
 		uint8 selfRating;
 		uint8 peerRating;
-		uint8 totalVerifications;
+		address[] verifiers;
 	}
-	mapping(address => string) public userNames;
-	mapping(address => Skill[]) public userSkills;
+	uint256 public _tokenId;
+	mapping(address => Skill[]) public skills;
+	mapping(address => string) public users;
 	mapping(address => uint256) public addressToTokenId;
 
-	constructor() ERC721("SkillVerification", "SKV") {
-		address user = 0xE42297a87b9882526FF2E5Ea0B190d3e8de6f793;
-		userNames[user] = "bhavyagor.eth";
-		userSkills[user].push(Skill(0, "Solidity", 5, 0, 0));
-		userSkills[user].push(Skill(1, "JavaScript", 4, 0, 0));
-		userSkills[user].push(Skill(2, "React", 4, 0, 0));
-		userSkills[user].push(Skill(3, "Node.js", 4, 0, 0));
-		userSkills[user].push(Skill(4, "Web3.js", 4, 0, 0));
-		userSkills[user].push(Skill(5, "Truffle", 4, 0, 0));
-	}
+	constructor() ERC721("SkillVerification", "SKV") {}
 
-	function addName(string memory _name) public {
-		userNames[msg.sender] = _name;
+	function addUser(string memory _name) public {
+		users[msg.sender] = _name;
 	}
 
 	function addSkill(
@@ -44,23 +36,45 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		string memory _name,
 		uint8 _selfRating
 	) public {
-		require(
-			_selfRating >= 1 && _selfRating <= 5,
-			"Rating should be between 1 and 5"
+		skills[msg.sender].push(
+			Skill(skillId, _name, _selfRating, 0, new address[](0))
 		);
-		require(
-			bytes(userNames[msg.sender]).length > 0,
-			"Please set your name first"
-		);
+	}
 
-		Skill memory skill = Skill(skillId, _name, _selfRating, 0, 0);
-		userSkills[msg.sender].push(skill);
+	function updateSkill(
+		uint256 _skillId,
+		string memory _name,
+		uint8 _selfRating
+	) public {
+		Skill storage skill = skills[msg.sender][_skillId];
+		skill.name = _name;
+		skill.selfRating = _selfRating;
+	}
+
+	function deleteSkill(uint256 _skillId) public {
+		require(_skillId < skills[msg.sender].length, "Index out of bounds");
+		// Move the last element into the position to delete
+		uint256 lastIndex = skills[msg.sender].length - 1;
+		skills[msg.sender][_skillId] = skills[msg.sender][lastIndex];
+		// Delete the last element (which is now a duplicate)
+		delete skills[msg.sender][lastIndex];
+		// Shorten the array
+		skills[msg.sender].pop();
+	}
+
+	function updateUserName(string memory _name) public {
+		users[msg.sender] = _name;
 	}
 
 	function tokenURI(
 		uint256 tokenId
 	) public view override(ERC721URIStorage, ERC721) returns (string memory) {
 		return _buildTokenURI(tokenId);
+	}
+
+	function updateTokenURI() public {
+		uint256 tokenId = addressToTokenId[msg.sender];
+		tokenURI(tokenId);
 	}
 
 	function _createText(
@@ -90,6 +104,13 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		uint256 textY
 	) private pure returns (string memory) {
 		string memory svg;
+		uint256 totalRating = computeTotalRating(
+			skill.selfRating,
+			skill.peerRating
+		);
+		if (skill.verifiers.length == 0) {
+			totalRating = skill.selfRating;
+		}
 
 		svg = string(
 			abi.encodePacked(
@@ -99,15 +120,13 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 				'" y="',
 				toString(48 + (textY * 50)),
 				'" width="250" height="50" xmlns="http://www.w3.org/2000/svg">',
-				generateStarsSVG(
-					computeTotalRating(skill.selfRating, skill.peerRating)
-				),
+				generateStarsSVG(totalRating),
 				"</svg>",
 				_createText(
 					string(
 						abi.encodePacked(
 							"(",
-							toString(skill.totalVerifications),
+							toString(skill.verifiers.length),
 							")"
 						)
 					),
@@ -122,16 +141,16 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 	}
 
 	function _combineSVGs(
+		string memory _name,
 		string[] memory skillSVGs
-	) private view returns (string memory) {
+	) private pure returns (string memory) {
 		string
 			memory combinedSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">';
 		combinedSVG = string(
 			abi.encodePacked(
 				combinedSVG,
 				'<rect width="500" height="500" fill="white"/>',
-				_createText(userNames[msg.sender], 40, 40, 40),
-				_createText("For more info visit: siteName", 10, 500, 10)
+				_createText(_name, 40, 40, 40)
 			)
 		);
 		for (uint256 i = 0; i < skillSVGs.length; i++) {
@@ -169,23 +188,23 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 			"ERC721Metadata: URI query for nonexistent token"
 		);
 		address owner = _ownerOf(tokenId);
-		Skill[] memory skills = userSkills[owner];
-		string[] memory skillSVGs = new string[](skills.length);
-		for (uint256 index = 0; index < skills.length; index++) {
-			skillSVGs[index] = _buildSkillSVG(skills[index], index);
+		string memory name = users[owner];
+		Skill[] memory userSkills = skills[owner];
+		string[] memory skillSVGs = new string[](userSkills.length);
+		for (uint256 index = 0; index < userSkills.length; index++) {
+			skillSVGs[index] = _buildSkillSVG(userSkills[index], index);
 		}
 
-		string memory combinedSVG = _combineSVGs(skillSVGs);
+		string memory combinedSVG = _combineSVGs(name, skillSVGs);
 		return _encodeMetadataJSON(tokenId, combinedSVG);
 	}
 
 	function mint() public {
-		require(
-			userSkills[msg.sender].length > 0,
-			"No skills found for this user"
-		);
-		_mint(msg.sender, 1);
-		addressToTokenId[msg.sender] = 1;
+		Skill[] memory userSkills = skills[msg.sender];
+		require(userSkills.length > 0, "No skills found for this user");
+		_tokenId++;
+		_mint(msg.sender, _tokenId);
+		addressToTokenId[msg.sender] = _tokenId;
 	}
 
 	function supportsInterface(
@@ -256,12 +275,15 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		uint256 _skillId,
 		uint8 _rating
 	) public {
+		Skill storage skill = skills[_user][_skillId];
 		require(
 			_rating >= 1 && _rating <= 5,
 			"Rating should be between 1 and 5"
 		);
-		userSkills[_user][_skillId].peerRating = _rating;
-		userSkills[_user][_skillId].totalVerifications += 1;
+		skill.verifiers.push(msg.sender);
+		skill.peerRating = uint8(
+			(skill.peerRating + _rating) / skill.verifiers.length
+		);
 	}
 
 	function computeTotalRating(
@@ -271,12 +293,8 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		return uint8((_selfRating + _peerRating) / 2);
 	}
 
-	function getUserSkills(address _user) public view returns (Skill[] memory) {
-		return userSkills[_user];
-	}
-
-	function getSkill(uint256 _skillId) public view returns (Skill memory) {
-		return userSkills[msg.sender][_skillId];
+	function getUserName() public view returns (string memory) {
+		return users[msg.sender];
 	}
 
 	function getTokenId() public view returns (uint256) {

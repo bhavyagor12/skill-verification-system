@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Rating } from "@mui/material";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useUserHook } from "~~/providers/UserProvider";
 import { Skill } from "~~/types/commontypes";
 import { notification } from "~~/utils/scaffold-eth";
@@ -18,13 +19,14 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
     updatedProofOfWork[index] = value;
     setSkill({ ...skill, proof_of_work: updatedProofOfWork });
   };
-
+  const { writeContractAsync } = useScaffoldWriteContract("SkillVerification");
   const handleAddProofOfWork = () => {
     if (skill?.proof_of_work.length >= 3) return;
     setSkill({ ...skill, proof_of_work: [...(skill.proof_of_work as string[]), ""] });
   };
   const handleClose = () => {
     setSkill({
+      skillId: 0,
       name: "",
       self_rating: 0,
       peer_rating: 0,
@@ -111,23 +113,32 @@ const SkillModal: React.FC<ModalProps> = ({ isOpen, onClose, initialSkill }) => 
           <div className="mt-5 sm:mt-6">
             <button
               onClick={() => {
+                console.log({ skill });
                 if (!skill.name || !skill.self_rating || skill.proof_of_work?.length === 0) {
                   notification.error("Please have name and self rating fields filled out.");
                   return;
                 }
                 if (initialSkill.name !== "") {
-                  const updatedSkills = user.skills?.map(s => {
-                    if (s.name === initialSkill.name) {
+                  const updatedSkills = user.skills?.map((s, index) => {
+                    if (index === initialSkill.skillId) {
                       return skill;
                     }
                     return s;
                   });
-                  updateUser.mutateAsync({ skills: updatedSkills });
+                  updateUser.mutateAsync({ skills: updatedSkills, address: user.address });
+                  writeContractAsync({
+                    functionName: "updateSkill",
+                    args: [BigInt(initialSkill.skillId), skill.name, skill.self_rating],
+                  });
                   notification.success("Skill updated successfully");
                   handleClose();
                   return;
                 }
-                updateUser.mutateAsync({ skills: [...(user.skills as Skill[]), skill] });
+                updateUser.mutateAsync({ skills: [...(user.skills as Skill[]), skill], address: user.address });
+                writeContractAsync({
+                  functionName: "addSkill",
+                  args: [BigInt(initialSkill.skillId), skill.name, skill.self_rating],
+                });
                 notification.success("Skill created successfully");
                 handleClose();
               }}

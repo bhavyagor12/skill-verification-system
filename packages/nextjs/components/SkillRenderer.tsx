@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import StarRating from "./StarRating";
 import { PencilIcon, StarIcon } from "@heroicons/react/24/outline";
 import { SkillModal } from "~~/app/profile/_components/SkillModal";
@@ -6,6 +7,8 @@ import { RatingModal } from "~~/app/users/_components/RatingModal";
 import { Skill } from "~~/types/commontypes";
 
 const SkillRenderer = ({ skill, canEdit }: { skill: Skill; canEdit: boolean }) => {
+  const params = useParams();
+  console.log(params);
   const { name, self_rating: selfRating, peer_rating: peerRating, verifiers } = skill;
   const [open, setOpen] = useState(false);
   const [ratingModalOpen, setRatingModalOpen] = useState(false);
@@ -34,7 +37,12 @@ const SkillRenderer = ({ skill, canEdit }: { skill: Skill; canEdit: boolean }) =
       </div>
       {open && <SkillModal isOpen={open} onClose={() => setOpen(false)} initialSkill={skill} />}
       {ratingModalOpen && (
-        <RatingModal isOpen={ratingModalOpen} onClose={() => setRatingModalOpen(false)} skill={skill} />
+        <RatingModal
+          isOpen={ratingModalOpen}
+          onClose={() => setRatingModalOpen(false)}
+          skill={skill}
+          userAddress={params.address as string}
+        />
       )}
     </div>
   );

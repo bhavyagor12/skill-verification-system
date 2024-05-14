@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useUserHook } from "~~/providers/UserProvider";
 import { getUserById } from "~~/services/database";
 import { User } from "~~/types/commontypes";
@@ -14,6 +15,11 @@ const UserProfileModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const { address } = useAccount();
   const { createUser, updateUser } = useUserHook();
   const [userExists, setUserExists] = useState<boolean>(false);
+  const { data } = useScaffoldReadContract({
+    contractName: "SkillVerification",
+    functionName: "getUserName",
+  });
+  const { writeContractAsync } = useScaffoldWriteContract("SkillVerification");
   const [user, setUser] = useState<User>({
     address: address as string,
     name: "",
@@ -94,8 +100,21 @@ const UserProfileModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   return;
                 }
                 if (userExists) {
-                  updateUser.mutateAsync(user);
+                  if (data !== user.name) {
+                    writeContractAsync({
+                      functionName: "updateUserName",
+                      args: [user.name],
+                    });
+                  }
+                  updateUser.mutateAsync({
+                    ...user,
+                    address: address as string,
+                  });
                 } else {
+                  writeContractAsync({
+                    functionName: "addUser",
+                    args: [user.name],
+                  });
                   createUser.mutateAsync(user);
                 }
                 notification.success("User created successfully");

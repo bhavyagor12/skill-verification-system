@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const SkillSchema = new mongoose.Schema({
+  skillId: {
+    type: Number,
+    required: true,
+  },
   name: {
     type: String,
     required: true,

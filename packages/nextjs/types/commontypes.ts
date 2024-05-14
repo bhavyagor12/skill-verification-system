@@ -11,6 +11,7 @@ export interface User {
 }
 
 export interface Skill {
+  skillId: number;
   name: string;
   self_rating: number;
   peer_rating: number;

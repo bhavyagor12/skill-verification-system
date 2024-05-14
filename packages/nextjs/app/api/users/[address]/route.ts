@@ -7,7 +7,7 @@ export async function GET(req: NextRequest, { params }: { params: { address: str
   const user_address = params.address;
   const user = await User.findOne({ address: user_address });
   if (!user) {
-    return new NextResponse(JSON.stringify({ message: "User not found" }), { status: 404 });
+    return new NextResponse(JSON.stringify(null), { status: 404 });
   }
   return new NextResponse(JSON.stringify(user));
 }

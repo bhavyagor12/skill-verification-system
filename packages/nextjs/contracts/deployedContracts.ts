@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     SkillVerification: {
-      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
       abi: [
         {
           inputs: [],
@@ -141,16 +141,16 @@ const deployedContracts = {
           type: "event",
         },
         {
-          inputs: [
+          inputs: [],
+          name: "_tokenId",
+          outputs: [
             {
-              internalType: "string",
-              name: "_name",
-              type: "string",
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
             },
           ],
-          name: "addName",
-          outputs: [],
-          stateMutability: "nonpayable",
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -172,6 +172,19 @@ const deployedContracts = {
             },
           ],
           name: "addSkill",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_name",
+              type: "string",
+            },
+          ],
+          name: "addUser",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -260,6 +273,19 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "uint256",
+              name: "_skillId",
+              type: "uint256",
+            },
+          ],
+          name: "deleteSkill",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
               name: "tokenId",
               type: "uint256",
             },
@@ -270,52 +296,6 @@ const deployedContracts = {
               internalType: "address",
               name: "",
               type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_skillId",
-              type: "uint256",
-            },
-          ],
-          name: "getSkill",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "skillId",
-                  type: "uint256",
-                },
-                {
-                  internalType: "string",
-                  name: "name",
-                  type: "string",
-                },
-                {
-                  internalType: "uint8",
-                  name: "selfRating",
-                  type: "uint8",
-                },
-                {
-                  internalType: "uint8",
-                  name: "peerRating",
-                  type: "uint8",
-                },
-                {
-                  internalType: "uint8",
-                  name: "totalVerifications",
-                  type: "uint8",
-                },
-              ],
-              internalType: "struct SkillVerification.Skill",
-              name: "",
-              type: "tuple",
             },
           ],
           stateMutability: "view",
@@ -335,46 +315,13 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-          ],
-          name: "getUserSkills",
+          inputs: [],
+          name: "getUserName",
           outputs: [
             {
-              components: [
-                {
-                  internalType: "uint256",
-                  name: "skillId",
-                  type: "uint256",
-                },
-                {
-                  internalType: "string",
-                  name: "name",
-                  type: "string",
-                },
-                {
-                  internalType: "uint8",
-                  name: "selfRating",
-                  type: "uint8",
-                },
-                {
-                  internalType: "uint8",
-                  name: "peerRating",
-                  type: "uint8",
-                },
-                {
-                  internalType: "uint8",
-                  name: "totalVerifications",
-                  type: "uint8",
-                },
-              ],
-              internalType: "struct SkillVerification.Skill[]",
+              internalType: "string",
               name: "",
-              type: "tuple[]",
+              type: "string",
             },
           ],
           stateMutability: "view",
@@ -535,6 +482,45 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "skills",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "skillId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "name",
+              type: "string",
+            },
+            {
+              internalType: "uint8",
+              name: "selfRating",
+              type: "uint8",
+            },
+            {
+              internalType: "uint8",
+              name: "peerRating",
+              type: "uint8",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "bytes4",
               name: "interfaceId",
               type: "bytes4",
@@ -622,20 +608,44 @@ const deployedContracts = {
         {
           inputs: [
             {
-              internalType: "address",
-              name: "",
-              type: "address",
+              internalType: "uint256",
+              name: "_skillId",
+              type: "uint256",
             },
-          ],
-          name: "userNames",
-          outputs: [
             {
               internalType: "string",
-              name: "",
+              name: "_name",
+              type: "string",
+            },
+            {
+              internalType: "uint8",
+              name: "_selfRating",
+              type: "uint8",
+            },
+          ],
+          name: "updateSkill",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "updateTokenURI",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_name",
               type: "string",
             },
           ],
-          stateMutability: "view",
+          name: "updateUserName",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -645,38 +655,13 @@ const deployedContracts = {
               name: "",
               type: "address",
             },
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
           ],
-          name: "userSkills",
+          name: "users",
           outputs: [
             {
-              internalType: "uint256",
-              name: "skillId",
-              type: "uint256",
-            },
-            {
               internalType: "string",
-              name: "name",
+              name: "",
               type: "string",
-            },
-            {
-              internalType: "uint8",
-              name: "selfRating",
-              type: "uint8",
-            },
-            {
-              internalType: "uint8",
-              name: "peerRating",
-              type: "uint8",
-            },
-            {
-              internalType: "uint8",
-              name: "totalVerifications",
-              type: "uint8",
             },
           ],
           stateMutability: "view",

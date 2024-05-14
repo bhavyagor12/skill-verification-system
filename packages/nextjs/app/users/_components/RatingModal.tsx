@@ -1,27 +1,37 @@
-import { useState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import Link from "next/link";
 import { Rating } from "@mui/material";
-import { Skill } from "~~/types/commontypes";
+import { toBig } from "viem";
+import { useAccount } from "wagmi";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { useUserHook } from "~~/providers/UserProvider";
+import { getUserById } from "~~/services/database";
+import { Skill, User } from "~~/types/commontypes";
+import { notification } from "~~/utils/scaffold-eth";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   skill: Skill;
+  userAddress: string;
 }
 
-const RatingModal: React.FC<ModalProps> = ({ isOpen, onClose, skill }) => {
+const RatingModal: React.FC<ModalProps> = ({ isOpen, onClose, skill, userAddress }) => {
+  const { address } = useAccount();
   const [stars, setStars] = useState<number>(1);
+  const { writeContractAsync } = useScaffoldWriteContract("SkillVerification");
   const handleClose = () => {
     onClose();
   };
-
+  const { updateUser, users } = useUserHook();
+  const user = users.find(user => user.address === userAddress);
+  if (!user) return null;
   return (
     <div className={`fixed inset-0 z-50 overflow-y-auto ${isOpen ? "block" : "hidden"}`}>
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
-
         <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
           &#8203;
         </span>
@@ -68,12 +78,28 @@ const RatingModal: React.FC<ModalProps> = ({ isOpen, onClose, skill }) => {
           <div className="mt-5 sm:mt-6">
             <button
               onClick={() => {
-                console.log("HIHHII");
+                writeContractAsync({
+                  functionName: "verifySkill",
+                  args: [userAddress, BigInt(skill.skillId), stars],
+                });
+                user.skills = user.skills.map(userSkill => {
+                  if (userSkill.skillId === skill.skillId) {
+                    userSkill.verifiers.push(address as string);
+                    userSkill.peer_rating = (userSkill.peer_rating + stars) / userSkill.verifiers.length;
+                  }
+                  return userSkill;
+                });
+                updateUser.mutateAsync({
+                  ...user,
+                  address: userAddress,
+                });
+                notification.success("Skill verified successfully");
+                onClose();
               }}
               type="button"
               className="btn btn-primary rounded-md w-full"
             >
-              Submit
+              Verify{" "}
             </button>
           </div>
         </div>
