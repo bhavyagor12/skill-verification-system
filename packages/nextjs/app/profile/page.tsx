@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { SkillModal } from "./_components/SkillModal";
 import { UserProfileModal } from "./_components/UserProfileModal";
 import type { NextPage } from "next";
@@ -12,6 +13,7 @@ import { Skill } from "~~/types/commontypes";
 import { notification } from "~~/utils/scaffold-eth";
 
 const Profile: NextPage = () => {
+  const router = useRouter();
   const { userQuery } = useUserHook();
   const user = userQuery.data;
   const loading = userQuery.isLoading;
@@ -23,13 +25,13 @@ const Profile: NextPage = () => {
   });
   const { writeContractAsync } = useScaffoldWriteContract("SkillVerification");
   if (loading) return <span className="loading loading-dots loading-lg"></span>;
-  console.log(user);
   if (!user || user.name === "")
     return (
       <UserProfileModal
         isOpen={true}
         onClose={() => {
           notification.info("Please create a profile first.");
+          router.push("/");
         }}
       />
     );

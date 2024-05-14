@@ -275,6 +275,11 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		uint256 _skillId,
 		uint8 _rating
 	) public {
+		require(
+			bytes(users[msg.sender]).length > 0,
+			"You need to register a profile"
+		);
+		require(_user != msg.sender, "Cannot verify own skill");
 		Skill storage skill = skills[_user][_skillId];
 		require(
 			_rating >= 1 && _rating <= 5,

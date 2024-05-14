@@ -1,7 +1,8 @@
 import { useState } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import StarRating from "./StarRating";
-import { PencilIcon, StarIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, PencilIcon, StarIcon } from "@heroicons/react/24/outline";
 import { SkillModal } from "~~/app/profile/_components/SkillModal";
 import { RatingModal } from "~~/app/users/_components/RatingModal";
 import { Skill } from "~~/types/commontypes";
@@ -25,10 +26,15 @@ const SkillRenderer = ({ skill, canEdit }: { skill: Skill; canEdit: boolean }) =
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-600 focus:outline-none w-8 h-4"
         />
       ) : (
-        <StarIcon
-          onClick={() => setRatingModalOpen(true)}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-600 focus:outline-none w-8 h-4"
-        />
+        <>
+          <StarIcon
+            onClick={() => setRatingModalOpen(true)}
+            className="absolute top-3 right-3 text-gray-500 hover:text-gray-600 focus:outline-none w-8 h-4"
+          />
+          <Link href={`/users/${params.address}/skill/${skill.skillId}`}>
+            <MagnifyingGlassIcon className="absolute top-3 right-9 w-8 h-4" />
+          </Link>
+        </>
       )}
       <span className="font-bold text-xl lg:text-3xl">{name}</span>
       <div className="flex items-center justify-center gap-2">

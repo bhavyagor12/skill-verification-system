@@ -79,19 +79,21 @@ const RatingModal: React.FC<ModalProps> = ({ isOpen, onClose, skill, userAddress
                 writeContractAsync({
                   functionName: "verifySkill",
                   args: [userAddress, BigInt(skill.skillId), stars],
+                }).then(() => {
+                  user.skills = user.skills.map(userSkill => {
+                    if (userSkill.skillId === skill.skillId) {
+                      userSkill.verifiers.push(address as string);
+                      const verifiersLength = userSkill.verifiers.length + 1;
+                      userSkill.peer_rating = (userSkill.peer_rating + stars) / verifiersLength;
+                    }
+                    return userSkill;
+                  });
+                  updateUser.mutateAsync({
+                    ...user,
+                    address: userAddress,
+                  });
+                  notification.success("Skill verified successfully");
                 });
-                user.skills = user.skills.map(userSkill => {
-                  if (userSkill.skillId === skill.skillId) {
-                    userSkill.verifiers.push(address as string);
-                    userSkill.peer_rating = (userSkill.peer_rating + stars) / userSkill.verifiers.length;
-                  }
-                  return userSkill;
-                });
-                updateUser.mutateAsync({
-                  ...user,
-                  address: userAddress,
-                });
-                notification.success("Skill verified successfully");
                 onClose();
               }}
               type="button"
