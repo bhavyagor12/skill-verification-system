@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useContext, useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
 import { UseMutationResult, UseQueryResult, useMutation, useQuery } from "@tanstack/react-query";
 import { useAccount } from "wagmi";
 import { getUserById } from "~~/services/database";
@@ -8,9 +8,9 @@ interface IUser {
   users: User[];
   usersQuery: UseQueryResult<User[], unknown>;
   userQuery: UseQueryResult<User, unknown>;
-  createUser: UseMutationResult<User, unknown, Partial<User>, unknown>;
-  updateUser: UseMutationResult<User, unknown, Partial<User>, unknown>;
-  deleteUser: UseMutationResult<User, unknown, void, unknown>;
+  createUser: UseMutationResult<any, unknown, any, unknown>;
+  updateUser: UseMutationResult<any, unknown, any, unknown>;
+  deleteUser: UseMutationResult<any, unknown, void, unknown>;
 }
 
 const UserContext = createContext<IUser | null>(null);

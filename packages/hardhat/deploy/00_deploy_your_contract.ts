@@ -7,7 +7,8 @@ import { DeployFunction } from "hardhat-deploy/types";
  *
  * @param hre HardhatRuntimeEnvironment object.
  */
-const deploySkillVerification: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
+// eslint-disable-next-line @typescript-eslint/require-await
+const deploySkillVerification: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   /*
     On localhost, the deployer account is the one that comes with Hardhat, which is already funded.
 

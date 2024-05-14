@@ -1,12 +1,10 @@
-import { useActionState, useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Rating } from "@mui/material";
-import { toBig } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useUserHook } from "~~/providers/UserProvider";
-import { getUserById } from "~~/services/database";
-import { Skill, User } from "~~/types/commontypes";
+import { Skill } from "~~/types/commontypes";
 import { notification } from "~~/utils/scaffold-eth";
 
 interface ModalProps {
