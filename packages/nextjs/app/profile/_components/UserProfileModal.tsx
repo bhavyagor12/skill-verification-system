@@ -18,6 +18,8 @@ const UserProfileModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const { data } = useScaffoldReadContract({
     contractName: "SkillVerification",
     functionName: "getUserName",
+    // @ts-ignore
+    args: [address],
   });
   const { writeContractAsync } = useScaffoldWriteContract("SkillVerification");
   const [user, setUser] = useState<User>({

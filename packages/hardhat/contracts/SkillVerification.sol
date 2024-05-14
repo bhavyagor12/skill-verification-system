@@ -298,11 +298,11 @@ contract SkillVerification is ERC721, Ownable, ERC721URIStorage {
 		return uint8((_selfRating + _peerRating) / 2);
 	}
 
-	function getUserName() public view returns (string memory) {
-		return users[msg.sender];
+	function getUserName(address user) public view returns (string memory) {
+		return users[user];
 	}
 
-	function getTokenId() public view returns (uint256) {
-		return addressToTokenId[msg.sender];
+	function getTokenId(address user) public view returns (uint256) {
+		return addressToTokenId[user];
 	}
 }

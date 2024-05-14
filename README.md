@@ -1,39 +1,35 @@
-# 🏗 Scaffold-ETH 2
+# Skill Verification System
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+SkillVerify is a platform designed to validate and showcase individuals' skills through a peer verification system.
+Users can post their skills along with evidence of their proficiency, and peers can verify and rate these skills.
+Higher verifications contribute to a user's credibility and are reflected in their profile.
+Additionally, users can mint NFTs to represent their skills.
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+This system can also be used to connect with others to work on projects, find mentors, or learn new skills.
 
-⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript.
+## Workflow:
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+1. **Skill Addition:** Users add skills to their profiles along with self-assessed proficiency levels.
+2. **Verification Process:** Peers review the skills posted by others and provide verification and ratings based on the evidence provided.
+3. **Profile Update:** Verified skills and ratings are displayed on the user's profile, enhancing their professional image.
+4. **NFT Minting:** Users can choose to mint NFTs representing their skills. These NFTs can be kept as digital assets or shared with potential employers or clients.
+5. **Networking:** Users can connect with others based on their skills and ratings, enabling collaboration and knowledge sharing.
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+## Benefits:
 
-## Requirements
-
-Before you begin, you need to install the following tools:
-
-- [Node (>= v18.17)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+- **Credibility:** Peer verification adds credibility to the skills listed on a user's profile.
+- **Transparency:** Evidence submission ensures transparency in skill assessment.
+- **Professional Development:** Users can track their skill progression and achievements over time.
+- **Digital Ownership:** NFTs provide a unique and immutable record of skills and verifications.
+- **Networking:** Engaging in the verification process fosters a supportive community of professionals sharing their expertise.
 
 ## Quickstart
 
-To get started with Scaffold-ETH 2, follow the steps below:
+To get started with Skill-verify, follow the steps below:
 
 1. Clone this repo & install dependencies
 
 ```
-git clone https://github.com/scaffold-eth/scaffold-eth-2.git
-cd scaffold-eth-2
 yarn install
 ```
 
@@ -43,15 +39,11 @@ yarn install
 yarn chain
 ```
 
-This command starts a local Ethereum network using Hardhat. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `hardhat.config.ts`.
-
 3. On a second terminal, deploy the test contract:
 
 ```
 yarn deploy
 ```
-
-This command deploys a test smart contract to the local network. The contract is located in `packages/hardhat/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/hardhat/deploy` to deploy the contract to the network. You can also customize the deploy script.
 
 4. On a third terminal, start your NextJS app:
 
@@ -59,23 +51,10 @@ This command deploys a test smart contract to the local network. The contract is
 yarn start
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+5. In your `.env.local` file in `packages/nextjs`
 
-**What's next**:
+```
+DATABASE_URL = "your mongodb url"
+```
 
-- Edit your smart contract `YourContract.sol` in `packages/hardhat/contracts`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/hardhat/deploy`
-- Edit your smart contract test in: `packages/hardhat/test`. To run test use `yarn hardhat:test`
-
-## Documentation
-
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
-
-To know more about its features, check out our [website](https://scaffoldeth.io).
-
-## Contributing to Scaffold-ETH 2
-
-We welcome contributions to Scaffold-ETH 2!
-
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+### Big thanks to : 🏗 Scaffold-ETH 2 and Team BuidlGuidl

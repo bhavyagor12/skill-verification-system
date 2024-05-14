@@ -1,28 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SkillModal } from "./_components/SkillModal";
 import { UserProfileModal } from "./_components/UserProfileModal";
+import { Divider } from "@mui/material";
 import type { NextPage } from "next";
+import { useAccount } from "wagmi";
 import SkillRenderer from "~~/components/SkillRenderer";
 import UserRenderer from "~~/components/UserRenderer";
+import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useUserHook } from "~~/providers/UserProvider";
 import { Skill } from "~~/types/commontypes";
 import { notification } from "~~/utils/scaffold-eth";
+import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
 
 const Profile: NextPage = () => {
+  const { address } = useAccount();
+  const contracts = getAllContracts();
   const router = useRouter();
   const { userQuery } = useUserHook();
   const user = userQuery.data;
   const loading = userQuery.isLoading;
   const [open, setOpen] = useState(false);
   const [openSkill, setOpenSkill] = useState(false);
-  const { data } = useScaffoldReadContract({
+  const { data, refetch } = useScaffoldReadContract({
     contractName: "SkillVerification",
     functionName: "getTokenId",
+    // @ts-ignore
+    args: [address],
   });
+  useEffect(() => {
+    if (!address) return;
+    refetch();
+  }, [address, refetch]);
+  console.log({ data });
   const { writeContractAsync } = useScaffoldWriteContract("SkillVerification");
   if (loading) return <span className="loading loading-dots loading-lg"></span>;
   if (!user || user.name === "")
@@ -68,6 +81,16 @@ const Profile: NextPage = () => {
             >
               Mint
             </button>
+            {data && (
+              <div className="flex flex-col gap-2">
+                <Divider className="w-1/2" />
+                <span className="text-center">Token ID: {Number(data)}</span>
+                <span className="text-center">
+                  Contract Address:
+                  <Address address={contracts.SkillVerification.address} size="sm" />
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
